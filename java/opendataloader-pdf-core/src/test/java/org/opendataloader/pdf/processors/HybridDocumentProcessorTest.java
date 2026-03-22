@@ -49,6 +49,15 @@ public class HybridDocumentProcessorTest {
     }
 
     @Test
+    public void testGrobidDoclingHybridModeEnabled() {
+        Config config = new Config();
+        config.setHybrid("grobid-docling");
+
+        Assertions.assertTrue(config.isHybridEnabled());
+        Assertions.assertEquals("grobid-docling", config.getHybrid());
+    }
+
+    @Test
     public void testHybridModeDisabled() {
         Config config = new Config();
         config.setHybrid("off");

@@ -40,6 +40,8 @@ public class Config {
     public static final String HYBRID_DOCLING = "docling";
     /** Hybrid mode: docling-fast backend (deprecated alias for docling). */
     public static final String HYBRID_DOCLING_FAST = "docling-fast";
+    /** Hybrid mode: docling backend enriched by GROBID structure hints. */
+    public static final String HYBRID_GROBID_DOCLING = "grobid-docling";
     /** Hybrid mode: hancom backend (Hancom Document AI). */
     public static final String HYBRID_HANCOM = "hancom";
     /** Hybrid mode: azure backend (Azure Document Intelligence). */
@@ -117,6 +119,7 @@ public class Config {
         hybridOptions.add(HYBRID_OFF);
         hybridOptions.add(HYBRID_DOCLING);
         hybridOptions.add(HYBRID_DOCLING_FAST);  // deprecated alias
+        hybridOptions.add(HYBRID_GROBID_DOCLING);
         hybridOptions.add(HYBRID_HANCOM);
         // azure, google added when implemented
         hybridModeOptions.add(HYBRID_MODE_AUTO);

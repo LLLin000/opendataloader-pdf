@@ -44,6 +44,8 @@ public class HybridClientFactory {
 
     /** Backend type constant for Docling Fast Server. */
     public static final String BACKEND_DOCLING_FAST = "docling-fast";
+    /** Backend type constant for Docling output enriched by GROBID structure hints. */
+    public static final String BACKEND_GROBID_DOCLING = "grobid-docling";
 
     /** Backend type constant for Hancom (not yet implemented). */
     public static final String BACKEND_HANCOM = "hancom";
@@ -89,6 +91,8 @@ public class HybridClientFactory {
     private static HybridClient createClient(String hybrid, HybridConfig config) {
         if (BACKEND_DOCLING_FAST.equals(hybrid)) {
             return new DoclingFastServerClient(config);
+        } else if (BACKEND_GROBID_DOCLING.equals(hybrid)) {
+            return new GrobidDoclingClient(config);
         } else if (BACKEND_HANCOM.equals(hybrid)) {
             return new HancomClient(config);
         } else if (BACKEND_AZURE.equals(hybrid)) {
@@ -138,6 +142,8 @@ public class HybridClientFactory {
         for (HybridClient client : CLIENT_CACHE.values()) {
             if (client instanceof DoclingFastServerClient) {
                 ((DoclingFastServerClient) client).shutdown();
+            } else if (client instanceof GrobidDoclingClient) {
+                ((GrobidDoclingClient) client).shutdown();
             } else if (client instanceof HancomClient) {
                 ((HancomClient) client).shutdown();
             }
@@ -157,7 +163,9 @@ public class HybridClientFactory {
         }
 
         String lowerHybrid = hybrid.toLowerCase();
-        return BACKEND_DOCLING_FAST.equals(lowerHybrid) || BACKEND_HANCOM.equals(lowerHybrid);
+        return BACKEND_DOCLING_FAST.equals(lowerHybrid)
+            || BACKEND_GROBID_DOCLING.equals(lowerHybrid)
+            || BACKEND_HANCOM.equals(lowerHybrid);
     }
 
     /**
@@ -166,7 +174,7 @@ public class HybridClientFactory {
      * @return A string listing all supported backends.
      */
     public static String getSupportedBackends() {
-        return String.join(", ", BACKEND_DOCLING_FAST, BACKEND_HANCOM);
+        return String.join(", ", BACKEND_DOCLING_FAST, BACKEND_GROBID_DOCLING, BACKEND_HANCOM);
     }
 
     /**
@@ -175,6 +183,7 @@ public class HybridClientFactory {
      * @return A string listing all known backends.
      */
     public static String getAllKnownBackends() {
-        return String.join(", ", BACKEND_DOCLING_FAST, BACKEND_HANCOM, BACKEND_AZURE, BACKEND_GOOGLE);
+        return String.join(", ", BACKEND_DOCLING_FAST, BACKEND_GROBID_DOCLING,
+            BACKEND_HANCOM, BACKEND_AZURE, BACKEND_GOOGLE);
     }
 }

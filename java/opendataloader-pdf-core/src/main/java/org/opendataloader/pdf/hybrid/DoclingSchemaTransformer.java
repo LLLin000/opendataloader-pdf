@@ -86,6 +86,8 @@ public class DoclingSchemaTransformer implements HybridSchemaTransformer {
     private static final String LABEL_PAGE_FOOTER = "page_footer";
     private static final String LABEL_LIST_ITEM = "list_item";
     private static final String LABEL_FORMULA = "formula";
+    private static final String GROBID_LABEL_META_KEY = "grobid_label";
+    private static final String GROBID_LEVEL_META_KEY = "grobid_level";
 
     // Docling coordinate origins
     private static final String COORD_ORIGIN_BOTTOMLEFT = "BOTTOMLEFT";
@@ -248,6 +250,8 @@ public class DoclingSchemaTransformer implements HybridSchemaTransformer {
      */
     private void transformText(JsonNode textNode, List<List<IObject>> result, Map<Integer, Double> pageHeights) {
         String label = getTextValue(textNode, "label");
+        JsonNode meta = textNode.get("meta");
+        String grobidLabel = getTextValue(meta, GROBID_LABEL_META_KEY);
 
         // Skip furniture elements (page headers/footers)
         if (LABEL_PAGE_HEADER.equals(label) || LABEL_PAGE_FOOTER.equals(label)) {
@@ -281,7 +285,7 @@ public class DoclingSchemaTransformer implements HybridSchemaTransformer {
 
         // Create appropriate IObject based on label
         IObject object;
-        if (LABEL_SECTION_HEADER.equals(label)) {
+        if (LABEL_SECTION_HEADER.equals(label) || LABEL_SECTION_HEADER.equals(grobidLabel)) {
             object = createHeading(text, bbox, textNode);
         } else if (LABEL_FORMULA.equals(label)) {
             object = createFormula(text, bbox);
@@ -302,7 +306,9 @@ public class DoclingSchemaTransformer implements HybridSchemaTransformer {
 
         // Try to extract level from node metadata
         JsonNode meta = textNode.get("meta");
-        if (meta != null && meta.has("level")) {
+        if (meta != null && meta.has(GROBID_LEVEL_META_KEY)) {
+            level = meta.get(GROBID_LEVEL_META_KEY).asInt(1);
+        } else if (meta != null && meta.has("level")) {
             level = meta.get("level").asInt(1);
         }
 

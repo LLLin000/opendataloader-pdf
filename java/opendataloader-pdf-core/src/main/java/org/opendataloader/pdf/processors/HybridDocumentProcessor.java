@@ -419,7 +419,8 @@ public class HybridDocumentProcessor {
         String hybrid = config.getHybrid();
 
         // docling and docling-fast (deprecated) use DoclingSchemaTransformer
-        if (Config.HYBRID_DOCLING.equals(hybrid) || Config.HYBRID_DOCLING_FAST.equals(hybrid)) {
+        if (Config.HYBRID_DOCLING.equals(hybrid) || Config.HYBRID_DOCLING_FAST.equals(hybrid)
+            || Config.HYBRID_GROBID_DOCLING.equals(hybrid)) {
             return new DoclingSchemaTransformer();
         }
 

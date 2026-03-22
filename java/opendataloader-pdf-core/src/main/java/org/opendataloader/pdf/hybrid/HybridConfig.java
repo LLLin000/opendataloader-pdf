@@ -146,8 +146,9 @@ public class HybridConfig {
             return null;
         }
         String lowerHybrid = hybrid.toLowerCase();
-        // Both "docling" and "docling-fast" (deprecated) use the same server
-        if ("docling".equals(lowerHybrid) || "docling-fast".equals(lowerHybrid)) {
+        // "grobid-docling" currently reuses the same docling-fast service and enriches its JSON downstream.
+        if ("docling".equals(lowerHybrid) || "docling-fast".equals(lowerHybrid)
+            || "grobid-docling".equals(lowerHybrid)) {
             return DOCLING_FAST_DEFAULT_URL;
         }
         if ("hancom".equals(lowerHybrid)) {

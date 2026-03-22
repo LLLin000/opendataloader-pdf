@@ -39,6 +39,17 @@ class HybridClientFactoryTest {
     }
 
     @Test
+    void testCreateGrobidDoclingClient() {
+        HybridConfig config = new HybridConfig();
+        HybridClient client = HybridClientFactory.create("grobid-docling", config);
+
+        assertNotNull(client);
+        assertInstanceOf(GrobidDoclingClient.class, client);
+
+        ((GrobidDoclingClient) client).shutdown();
+    }
+
+    @Test
     void testCreateDoclingFastClientCaseInsensitive() {
         HybridConfig config = new HybridConfig();
 
@@ -138,6 +149,13 @@ class HybridClientFactoryTest {
     }
 
     @Test
+    void testIsSupportedGrobidDocling() {
+        assertTrue(HybridClientFactory.isSupported("grobid-docling"));
+        assertTrue(HybridClientFactory.isSupported("GROBID-DOCLING"));
+        assertTrue(HybridClientFactory.isSupported("Grobid-Docling"));
+    }
+
+    @Test
     void testIsSupportedHancom() {
         assertTrue(HybridClientFactory.isSupported("hancom"));
         assertTrue(HybridClientFactory.isSupported("HANCOM"));
@@ -163,8 +181,9 @@ class HybridClientFactoryTest {
         String supported = HybridClientFactory.getSupportedBackends();
 
         assertTrue(supported.contains("docling-fast"));
+        assertTrue(supported.contains("grobid-docling"));
         assertTrue(supported.contains("hancom"));
-        assertFalse(supported.contains("docling,"));
+        assertFalse(java.util.Arrays.asList(supported.split(", ")).contains("docling"));
     }
 
     @Test
@@ -172,6 +191,7 @@ class HybridClientFactoryTest {
         String allKnown = HybridClientFactory.getAllKnownBackends();
 
         assertTrue(allKnown.contains("docling-fast"));
+        assertTrue(allKnown.contains("grobid-docling"));
         assertTrue(allKnown.contains("hancom"));
         assertTrue(allKnown.contains("azure"));
         assertTrue(allKnown.contains("google"));
@@ -180,6 +200,7 @@ class HybridClientFactoryTest {
     @Test
     void testBackendConstants() {
         assertEquals("docling-fast", HybridClientFactory.BACKEND_DOCLING_FAST);
+        assertEquals("grobid-docling", HybridClientFactory.BACKEND_GROBID_DOCLING);
         assertEquals("hancom", HybridClientFactory.BACKEND_HANCOM);
         assertEquals("azure", HybridClientFactory.BACKEND_AZURE);
         assertEquals("google", HybridClientFactory.BACKEND_GOOGLE);

@@ -128,6 +128,34 @@ public class DoclingSchemaTransformerTest {
     }
 
     @Test
+    void testTransformTextPromotedToHeadingByGrobidHints() {
+        ObjectNode json = createDoclingDocument();
+        ArrayNode texts = json.putArray("texts");
+
+        ObjectNode textNode = texts.addObject();
+        textNode.put("label", "text");
+        textNode.put("text", "Methods");
+        ObjectNode meta = textNode.putObject("meta");
+        meta.put("grobid_label", "section_header");
+        meta.put("grobid_level", 2);
+        addProvenance(textNode, 1, 100, 720, 280, 750);
+
+        HybridResponse response = new HybridResponse("", json, null);
+        Map<Integer, Double> pageHeights = new HashMap<>();
+        pageHeights.put(1, 842.0);
+
+        List<List<IObject>> result = transformer.transform(response, pageHeights);
+
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals(1, result.get(0).size());
+        Assertions.assertTrue(result.get(0).get(0) instanceof SemanticHeading);
+
+        SemanticHeading heading = (SemanticHeading) result.get(0).get(0);
+        Assertions.assertEquals("Methods", heading.getValue());
+        Assertions.assertEquals(2, heading.getHeadingLevel());
+    }
+
+    @Test
     void testFilterPageHeaderFooter() {
         ObjectNode json = createDoclingDocument();
         ArrayNode texts = json.putArray("texts");
