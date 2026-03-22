@@ -15,6 +15,8 @@
  */
 package org.opendataloader.pdf.hybrid;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 
@@ -51,5 +53,20 @@ public class GrobidDoclingClient implements HybridClient {
 
     public void shutdown() {
         delegate.shutdown();
+    }
+
+    static HybridResponse enrichResponseWithTei(HybridResponse response, String teiXml) throws Exception {
+        if (response == null || response.getJson() == null || teiXml == null || teiXml.trim().isEmpty()) {
+            return response;
+        }
+        JsonNode hints = GrobidHintExtractor.extractSectionHints(teiXml);
+        JsonNode enrichedJson = GrobidDoclingEnricher.enrich(response.getJson(), hints);
+        return new HybridResponse(
+            response.getMarkdown(),
+            response.getHtml(),
+            enrichedJson,
+            response.getPageContents(),
+            response.getFailedPages()
+        );
     }
 }
